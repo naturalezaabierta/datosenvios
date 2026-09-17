@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datos de envío — Naturaleza Abierta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --moss-050:#eef2ea;
+    --moss-900:#1f3323;
+    --moss-700:#2c4a35;
+    --clay:#c68a3e;
+    --clay-deep:#a8712f;
+    --ink:#221f1a;
+    --paper:#f7f5ee;
+    --line:#d8d6c8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--moss-050);
+    color:var(--ink);
+    font-family:'Work Sans',sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:480px;
+    margin:0 auto;
+    padding:48px 24px 64px;
+  }
+  .leaf{ width:38px;height:38px;margin-bottom:22px; }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:2rem;
+    line-height:1.15;
+    margin:0 0 10px;
+    color:var(--moss-900);
+    letter-spacing:-0.01em;
+  }
+  .sub{
+    color:#5b5648;
+    font-size:0.98rem;
+    margin:0 0 30px;
+    max-width:40ch;
+  }
+  .grupo-titulo{
+    font-family:'Fraunces',serif;
+    font-size:0.98rem;
+    color:var(--moss-700);
+    margin:26px 0 4px;
+    font-weight:500;
+  }
+  form{ display:flex; flex-direction:column; gap:18px; }
+  .fila-doble{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  label{
+    display:block;
+    font-size:0.85rem;
+    color:var(--moss-700);
+    margin-bottom:7px;
+    font-weight:500;
+  }
+  input, select{
+    width:100%;
+    padding:13px 14px;
+    border:1.5px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    font-family:'Work Sans',sans-serif;
+    font-size:1rem;
+    color:var(--ink);
+    transition:border-color .15s ease;
+  }
+  input:focus, select:focus{ outline:none; border-color:var(--moss-700); }
+  select{ appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%232c4a35' stroke-width='1.6' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; }
+  .ayuda{ font-size:0.8rem; color:#8a8672; margin-top:5px; }
+  button, .btn-confirmar{
+    display:block;
+    margin-top:12px;
+    padding:15px 20px;
+    border:none;
+    border-radius:3px;
+    background:var(--moss-700);
+    color:#fff;
+    font-family:'Work Sans',sans-serif;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    text-align:center;
+    text-decoration:none;
+    transition:background .15s ease;
+  }
+  button:hover, .btn-confirmar:hover{ background:var(--moss-900); }
+  button:disabled{ background:#9aa596; cursor:default; }
+  .err{ display:none; color:#8a3b2c; font-size:0.88rem; margin-top:-6px; }
+  .state{ display:none; text-align:center; padding-top:40px; }
+  .state.show{ display:block; }
+  form.hide{ display:none; }
+  .check{ width:52px;height:52px;margin:0 auto 20px; }
+  .state h2{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:1.5rem;
+    color:var(--moss-900);
+    margin:0 0 8px;
+  }
+  .state p{ color:#5b5648; font-size:0.95rem; }
+  footer{
+    margin-top:52px;
+    padding-top:20px;
+    border-top:1px solid var(--line);
+    font-size:0.82rem;
+    color:#8a8672;
+  }
+  .caja-internacional{
+    display:none;
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    border-radius:6px;
+    padding:16px;
+    margin-top:-4px;
+  }
+  .caja-internacional p{ margin:0; font-size:0.9rem; color:var(--moss-700); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <svg class="leaf" viewBox="0 0 40 40" fill="none">
+    <path d="M20 35C20 35 6 28 6 14C6 10 8 6 12 6C16 6 20 10 20 16C20 10 24 6 28 6C32 6 34 10 34 14C34 28 20 35 20 35Z" stroke="#2c4a35" stroke-width="1.6"/>
+    <path d="M20 35V16" stroke="#2c4a35" stroke-width="1.4"/>
+  </svg>
+
+  <h1>Vamos a preparar tu envío</h1>
+  <p class="sub">Con estos datos coordinamos que tu pedido llegue bien y a la oficina correcta.</p>
+
+  <form id="f">
+    <div>
+      <label for="pais">¿Dónde recibes el pedido?</label>
+      <select id="pais" required>
+        <option value="Venezuela" selected>Venezuela</option>
+        <option value="Internacional">Fuera de Venezuela</option>
+      </select>
+    </div>
+
+    <div class="caja-internacional" id="cajaInternacional">
+      <p>Para envíos fuera de Venezuela coordinamos directo contigo — un asesor te va a escribir por aquí mismo para ver los detalles. Solo confirma abajo.</p>
+    </div>
+
+    <div id="camposNacionales">
+      <div class="grupo-titulo">Tus datos</div>
+      <div class="fila-doble">
+        <div>
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" required>
+        </div>
+        <div>
+          <label for="apellido">Apellido</label>
+          <input type="text" id="apellido" required>
+        </div>
+      </div>
+      <div class="fila-doble">
+        <div>
+          <label for="cedula">Número de cédula</label>
+          <input type="text" id="cedula" required>
+        </div>
+        <div>
+          <label for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" required placeholder="0412...">
+        </div>
+      </div>
+
+      <div class="grupo-titulo">Datos de entrega</div>
+      <div>
+        <label for="estadoVzla">Estado</label>
+        <select id="estadoVzla" required>
+          <option value="" disabled selected>Selecciona tu estado</option>
+          <option>Amazonas</option><option>Anzoátegui</option><option>Apure</option>
+          <option>Aragua</option><option>Barinas</option><option>Bolívar</option>
+          <option>Carabobo</option><option>Cojedes</option><option>Delta Amacuro</option>
+          <option>Distrito Capital</option><option>Falcón</option><option>Guárico</option>
+          <option>Lara</option><option>Mérida</option><option>Miranda</option>
+          <option>Monagas</option><option>Nueva Esparta</option><option>Portuguesa</option>
+          <option>Sucre</option><option>Táchira</option><option>Trujillo</option>
+          <option>La Guaira (Vargas)</option><option>Yaracuy</option><option>Zulia</option>
+        </select>
+      </div>
+      <div>
+        <label for="ciudad">Ciudad</label>
+        <input type="text" id="ciudad" required>
+      </div>
+      <div>
+        <label for="oficina">Oficina de envío</label>
+        <select id="oficina" required>
+          <option value="" disabled selected>Selecciona una agencia</option>
+          <option>MRW</option>
+          <option>Tealca</option>
+          <option>Zoom</option>
+          <option>Domesa</option>
+          <option value="__otra">Otra (especificar)</option>
+        </select>
+      </div>
+      <div id="otraWrap" style="display:none;">
+        <label for="otraOficina">Nombre de la agencia</label>
+        <input type="text" id="otraOficina">
+      </div>
+      <div>
+        <label for="direccion">Punto de referencia de esa oficina</label>
+        <input type="text" id="direccion" placeholder="Ej: frente a la plaza, cerca del C.C. Sambil">
+        <p class="ayuda">Opcional, pero ayuda a que la agencia ubique mejor la entrega.</p>
+      </div>
+    </div>
+
+    <p class="err" id="err">No pudimos guardar tus datos. Verifica el link o inténtalo de nuevo.</p>
+    <button type="submit" id="btn">Confirmar datos</button>
+  </form>
+
+  <div class="state" id="ok">
+    <svg class="check" viewBox="0 0 52 52" fill="none">
+      <circle cx="26" cy="26" r="24" stroke="#2c4a35" stroke-width="1.6"/>
+      <path d="M16 27l7 7 14-15" stroke="#2c4a35" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h2 id="okTitulo">Datos recibidos</h2>
+    <p id="okTexto">Dale al botón para volver a WhatsApp y que Valentina continúe.</p>
+    <a id="btnWhatsapp" class="btn-confirmar" style="display:inline-block;text-decoration:none;margin-top:14px;" target="_blank" rel="noopener">Volver a WhatsApp ✅</a>
+  </div>
+
+  <div class="state" id="badlink">
+    <h2>Este link ya no es válido</h2>
+    <p>Escríbele a Valentina por WhatsApp para que te mande uno nuevo.</p>
+  </div>
+
+  <footer>Naturaleza Abierta</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.45.4/supabase.min.js"></script>
+<script>
+  const SUPABASE_URL = "https://tgvcvnhrwswuxgjbpvwq.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_EKV8OM1y96u-DV_kUPGwkg_BZuGdf4D";
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const WEBHOOK_MINI_FORMULARIOS = "https://hook.us2.make.com/mq6evphde7l2rhlyz0dosqgg4kspvks1";
+
+  function normalizarTelWa(t){
+    if(!t) return null;
+    let d = t.replace(/\D/g,'');
+    if(d.startsWith('0')) d = '58' + d.slice(1);
+    else if(!d.startsWith('58')) d = '58' + d;
+    return d;
+  }
+
+  async function notificarValentina(payload){
+    try{
+      const res = await fetch(WEBHOOK_MINI_FORMULARIOS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      return res.ok;
+    }catch(ex){ return false; }
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const compraId = params.get("compra");
+  const telWa = normalizarTelWa(params.get("tel"));
+
+  const form = document.getElementById("f");
+  const paisSel = document.getElementById("pais");
+  const camposNacionales = document.getElementById("camposNacionales");
+  const cajaInternacional = document.getElementById("cajaInternacional");
+  const oficinaSel = document.getElementById("oficina");
+  const otraWrap = document.getElementById("otraWrap");
+  const otraInput = document.getElementById("otraOficina");
+  const err = document.getElementById("err");
+  const btn = document.getElementById("btn");
+
+  if(!compraId){
+    form.classList.add("hide");
+    document.getElementById("badlink").classList.add("show");
+  }
+
+  paisSel.addEventListener("change", () => {
+    const esInternacional = paisSel.value === "Internacional";
+    camposNacionales.style.display = esInternacional ? "none" : "block";
+    cajaInternacional.style.display = esInternacional ? "block" : "none";
+    // Si es internacional, los campos nacionales dejan de ser obligatorios
+    camposNacionales.querySelectorAll("input, select").forEach(el => { el.required = !esInternacional; });
+  });
+
+  oficinaSel.addEventListener("change", () => {
+    otraWrap.style.display = oficinaSel.value === "__otra" ? "block" : "none";
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    err.style.display = "none";
+    btn.disabled = true;
+    btn.textContent = "Enviando...";
+
+    const esInternacional = paisSel.value === "Internacional";
+    const oficina = oficinaSel.value === "__otra" ? otraInput.value.trim() : oficinaSel.value;
+
+    const payload = {
+      p_compra_id: compraId,
+      p_nombre: esInternacional ? "" : document.getElementById("nombre").value.trim(),
+      p_apellido: esInternacional ? "" : document.getElementById("apellido").value.trim(),
+      p_oficina_envio: esInternacional ? "" : oficina,
+      p_cedula: esInternacional ? "" : document.getElementById("cedula").value.trim(),
+      p_telefono: esInternacional ? "" : document.getElementById("telefono").value.trim(),
+      p_ciudad_envio: esInternacional ? "" : document.getElementById("ciudad").value.trim(),
+      p_provincia_envio: esInternacional ? "" : document.getElementById("estadoVzla").value,
+      p_direccion_envio: esInternacional ? "" : document.getElementById("direccion").value.trim(),
+      p_pais_envio: paisSel.value
+    };
+
+    try{
+      const { data, error } = await sb.rpc("fn_registrar_datos_envio", payload);
+      if(error || !data || data.ok === false){
+        throw new Error(error?.message || data?.error || "fallo");
+      }
+      form.classList.add("hide");
+
+      const notifPayload = {
+        formulario: "datos_envio",
+        telefono: telWa,
+        compra_id: compraId,
+        es_internacional: esInternacional
+      };
+      const enviado = telWa ? await notificarValentina(notifPayload) : false;
+
+      const btnWa = document.getElementById("btnWhatsapp");
+      if(esInternacional){
+        document.getElementById("okTitulo").textContent = "¡Listo!";
+        document.getElementById("okTexto").textContent = enviado
+          ? "Ya le avisamos a Valentina — un asesor te escribe por aquí mismo."
+          : "Dale al botón para avisarle a Valentina — un asesor te escribe por aquí mismo.";
+      } else {
+        document.getElementById("okTexto").textContent = enviado
+          ? "Ya le avisamos a Valentina, revisa tu WhatsApp."
+          : "Dale al botón para avisarle a Valentina que ya terminaste.";
+      }
+      if(enviado){
+        btnWa.style.display = "none";
+      } else {
+        const msg = esInternacional
+          ? `✅ Confirmo, envío internacional para la compra *${compraId}*. Quedo pendiente del asesor.`
+          : `✅ Ya llené mis datos de envío para la compra *${compraId}*. Continuamos por aquí.`;
+        btnWa.href = `https://wa.me/584221482602?text=${encodeURIComponent(msg)}`;
+      }
+      document.getElementById("ok").classList.add("show");
+    }catch(ex){
+      err.style.display = "block";
+      btn.disabled = false;
+      btn.textContent = "Confirmar datos";
+    }
+  });
+</script>
+</body>
+</html>
