@@ -138,7 +138,8 @@
   <h1>Vamos a preparar tu envío</h1>
   <p class="sub">Con estos datos coordinamos que tu pedido llegue bien y a la oficina correcta.</p>
 
-  <form id="f">
+  <!-- onsubmit="return false": si por cualquier motivo el script no carga, la página NO se recarga en blanco -->
+  <form id="f" onsubmit="return false">
     <div>
       <label for="pais">¿Dónde recibes el pedido?</label>
       <select id="pais" required>
@@ -237,11 +238,32 @@
   <footer>Naturaleza Abierta</footer>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.45.4/supabase.min.js"></script>
 <script>
   const SUPABASE_URL = "https://tgvcvnhrwswuxgjbpvwq.supabase.co";
   const SUPABASE_KEY = "sb_publishable_EKV8OM1y96u-DV_kUPGwkg_BZuGdf4D";
-  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // Cliente mínimo: llama directo a la API REST de Supabase (sin librería externa ni CDN).
+  // Devuelve { data, error } igual que supabase-js, así el resto del código no cambia.
+  const sb = {
+    async rpc(nombre, args){
+      try{
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${nombre}`, {
+          method: "POST",
+          headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" },
+          body: JSON.stringify(args || {})
+        });
+        const txt = await res.text();
+        let body = null;
+        try{ body = txt ? JSON.parse(txt) : null; }catch(_){ body = null; }
+        if(!res.ok){
+          return { data: null, error: { message: (body && (body.message || body.error)) || ("HTTP " + res.status) } };
+        }
+        return { data: body, error: null };
+      }catch(ex){
+        return { data: null, error: { message: (ex && ex.message) || "sin conexión" } };
+      }
+    }
+  };
 
   const WEBHOOK_MINI_FORMULARIOS = "https://hook.us2.make.com/mq6evphde7l2rhlyz0dosqgg4kspvks1";
 
@@ -353,6 +375,7 @@
       }
       document.getElementById("ok").classList.add("show");
     }catch(ex){
+      console.error("Error al guardar datos de envío:", ex);
       err.style.display = "block";
       btn.disabled = false;
       btn.textContent = "Confirmar datos";
