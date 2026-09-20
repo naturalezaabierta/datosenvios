@@ -139,7 +139,7 @@
   <p class="sub">Con estos datos coordinamos que tu pedido llegue bien y a la oficina correcta.</p>
 
   <!-- onsubmit="return false": si por cualquier motivo el script no carga, la página NO se recarga en blanco -->
-  <form id="f" onsubmit="return false">
+  <form id="f" onsubmit="return false" autocomplete="off">
     <div>
       <label for="pais">¿Dónde recibes el pedido?</label>
       <select id="pais" required>
@@ -230,6 +230,15 @@
     <a id="btnWhatsapp" class="btn-confirmar" style="display:inline-block;text-decoration:none;margin-top:14px;" target="_blank" rel="noopener">Volver a WhatsApp ✅</a>
   </div>
 
+  <div class="state" id="yaenviado">
+    <svg class="check" viewBox="0 0 52 52" fill="none">
+      <circle cx="26" cy="26" r="24" stroke="#2c4a35" stroke-width="1.6"/>
+      <path d="M16 27l7 7 14-15" stroke="#2c4a35" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h2>Ya recibimos tus datos</h2>
+    <p>Este link ya se usó. Si necesitas cambiar algo, escríbele a Valentina por WhatsApp.</p>
+  </div>
+
   <div class="state" id="badlink">
     <h2>Este link ya no es válido</h2>
     <p>Escríbele a Valentina por WhatsApp para que te mande uno nuevo.</p>
@@ -300,10 +309,32 @@
   const err = document.getElementById("err");
   const btn = document.getElementById("btn");
 
+  // --- Un solo uso: una vez enviado, el formulario no vuelve a mostrarse con datos ---
+  const CLAVE_ENVIADO = compraId ? ("envio_enviado_" + compraId) : null;
+  function yaEnviado(){
+    try{ return !!(CLAVE_ENVIADO && localStorage.getItem(CLAVE_ENVIADO)); }catch(_){ return false; }
+  }
+  function marcarEnviado(){
+    try{ if(CLAVE_ENVIADO) localStorage.setItem(CLAVE_ENVIADO, "1"); }catch(_){}
+  }
+  function mostrarYaEnviado(){
+    form.reset();
+    form.classList.add("hide");
+    document.getElementById("ok").classList.remove("show");
+    document.getElementById("yaenviado").classList.add("show");
+  }
+
   if(!compraId){
     form.classList.add("hide");
     document.getElementById("badlink").classList.add("show");
+  } else if(yaEnviado()){
+    mostrarYaEnviado();
   }
+
+  // Si vuelven con el botón "atrás" y el navegador restaura la página, no se muestran los datos
+  window.addEventListener("pageshow", (ev) => {
+    if(ev.persisted && yaEnviado()) mostrarYaEnviado();
+  });
 
   paisSel.addEventListener("change", () => {
     const esInternacional = paisSel.value === "Internacional";
@@ -319,6 +350,7 @@
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if(yaEnviado()){ mostrarYaEnviado(); return; }
     err.style.display = "none";
     btn.disabled = true;
     btn.textContent = "Enviando...";
@@ -341,9 +373,16 @@
 
     try{
       const { data, error } = await sb.rpc("fn_registrar_datos_envio", payload);
+      if(data && data.ok === false && data.error === "ya_registrado"){
+        marcarEnviado();
+        mostrarYaEnviado();
+        return;
+      }
       if(error || !data || data.ok === false){
         throw new Error(error?.message || data?.error || "fallo");
       }
+      marcarEnviado();
+      form.reset();
       form.classList.add("hide");
 
       const notifPayload = {
