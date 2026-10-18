@@ -152,6 +152,13 @@
       <p>Para envíos fuera de Venezuela coordinamos directo contigo — un asesor te va a escribir por aquí mismo para ver los detalles. Solo confirma abajo.</p>
     </div>
 
+    <!-- NUEVO: correo (visible tanto para Venezuela como para internacional) -->
+    <div>
+      <label for="correo">Correo electrónico</label>
+      <input type="email" id="correo" required placeholder="tucorreo@ejemplo.com" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false">
+      <p class="ayuda">Ahí te enviamos la confirmación de tu compra.</p>
+    </div>
+
     <div id="camposNacionales">
       <div class="grupo-titulo">Tus datos</div>
       <div class="fila-doble">
@@ -306,6 +313,7 @@
   const oficinaSel = document.getElementById("oficina");
   const otraWrap = document.getElementById("otraWrap");
   const otraInput = document.getElementById("otraOficina");
+  const correoInput = document.getElementById("correo");
   const err = document.getElementById("err");
   const btn = document.getElementById("btn");
 
@@ -342,6 +350,7 @@
     cajaInternacional.style.display = esInternacional ? "block" : "none";
     // Si es internacional, los campos nacionales dejan de ser obligatorios
     camposNacionales.querySelectorAll("input, select").forEach(el => { el.required = !esInternacional; });
+    // El correo siempre es obligatorio (está fuera de camposNacionales)
   });
 
   oficinaSel.addEventListener("change", () => {
@@ -352,6 +361,17 @@
     e.preventDefault();
     if(yaEnviado()){ mostrarYaEnviado(); return; }
     err.style.display = "none";
+
+    // Validación simple del correo antes de enviar nada
+    const correo = correoInput.value.trim().toLowerCase();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo)){
+      err.textContent = "Revisa tu correo electrónico: parece que le falta algo (ej: nombre@gmail.com).";
+      err.style.display = "block";
+      correoInput.focus();
+      return;
+    }
+    err.textContent = "No pudimos guardar tus datos. Verifica el link o inténtalo de nuevo.";
+
     btn.disabled = true;
     btn.textContent = "Enviando...";
 
@@ -371,6 +391,8 @@
       p_pais_envio: paisSel.value,
       p_tel_wa: telWa
     };
+    // OJO: el correo NO va en este payload a propósito: la función fn_registrar_datos_envio
+    // todavía no recibe ese parámetro. Se manda por el webhook de Make (abajo), y Make lo guarda.
 
     try{
       const { data, error } = await sb.rpc("fn_registrar_datos_envio", payload);
@@ -390,7 +412,15 @@
         formulario: "datos_envio",
         telefono: telWa,
         compra_id: compraId,
-        es_internacional: esInternacional
+        es_internacional: esInternacional,
+        correo: correo,
+        nombre: payload.p_nombre,
+        apellido: payload.p_apellido,
+        oficina_envio: payload.p_oficina_envio,
+        ciudad_envio: payload.p_ciudad_envio,
+        estado_envio: payload.p_provincia_envio,
+        referencia_envio: payload.p_direccion_envio,
+        pais_envio: payload.p_pais_envio
       };
       const enviado = telWa ? await notificarValentina(notifPayload) : false;
 
@@ -398,11 +428,11 @@
       if(esInternacional){
         document.getElementById("okTitulo").textContent = "¡Listo!";
         document.getElementById("okTexto").textContent = enviado
-          ? "Ya le avisamos a Valentina — un asesor te escribe por aquí mismo."
+          ? "Ya le avisamos a Valentina — un asesor te escribe por aquí mismo. Te enviamos la confirmación a tu correo."
           : "Dale al botón para avisarle a Valentina — un asesor te escribe por aquí mismo.";
       } else {
         document.getElementById("okTexto").textContent = enviado
-          ? "Ya le avisamos a Valentina, revisa tu WhatsApp."
+          ? "Ya le avisamos a Valentina, revisa tu WhatsApp. También te enviamos la confirmación a tu correo."
           : "Dale al botón para avisarle a Valentina que ya terminaste.";
       }
       if(enviado){
@@ -424,4 +454,3 @@
 </script>
 </body>
 </html>
-
