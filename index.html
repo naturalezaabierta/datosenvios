@@ -389,6 +389,7 @@
       p_provincia_envio: esInternacional ? "" : document.getElementById("estadoVzla").value,
       p_direccion_envio: esInternacional ? "" : document.getElementById("direccion").value.trim(),
       p_pais_envio: paisSel.value,
+      p_correo: correo,
       p_tel_wa: telWa
     };
     // OJO: el correo NO va en este payload a propósito: la función fn_registrar_datos_envio
