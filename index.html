@@ -392,8 +392,6 @@
       p_correo: correo,
       p_tel_wa: telWa
     };
-    // OJO: el correo NO va en este payload a propósito: la función fn_registrar_datos_envio
-    // todavía no recibe ese parámetro. Se manda por el webhook de Make (abajo), y Make lo guarda.
 
     try{
       const { data, error } = await sb.rpc("fn_registrar_datos_envio", payload);
