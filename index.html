@@ -116,7 +116,7 @@
     font-size:0.82rem;
     color:#8a8672;
   }
-  .caja-internacional{
+  .caja-internacional, .caja-delivery{
     display:none;
     background:var(--paper);
     border:1.5px solid var(--line);
@@ -124,7 +124,10 @@
     padding:16px;
     margin-top:-4px;
   }
-  .caja-internacional p{ margin:0; font-size:0.9rem; color:var(--moss-700); }
+  .caja-internacional p, .caja-delivery p{ margin:0; font-size:0.9rem; color:var(--moss-700); }
+  .caja-delivery{ border-color:var(--clay); }
+  #bloqueDelivery{ display:none; flex-direction:column; gap:18px; margin-top:18px; }
+  #bloqueNacional{ display:flex; flex-direction:column; gap:18px; margin-top:18px; }
 </style>
 </head>
 <body>
@@ -152,7 +155,7 @@
       <p>Para envíos fuera de Venezuela coordinamos directo contigo — un asesor te va a escribir por aquí mismo para ver los detalles. Solo confirma abajo.</p>
     </div>
 
-    <!-- NUEVO: correo (visible tanto para Venezuela como para internacional) -->
+    <!-- Correo (visible tanto para Venezuela como para internacional) -->
     <div>
       <label for="correo">Correo electrónico</label>
       <input type="email" id="correo" required placeholder="tucorreo@ejemplo.com" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false">
@@ -184,42 +187,70 @@
 
       <div class="grupo-titulo">Datos de entrega</div>
       <div>
-        <label for="estadoVzla">Estado</label>
-        <select id="estadoVzla" required>
-          <option value="" disabled selected>Selecciona tu estado</option>
-          <option>Amazonas</option><option>Anzoátegui</option><option>Apure</option>
-          <option>Aragua</option><option>Barinas</option><option>Bolívar</option>
-          <option>Carabobo</option><option>Cojedes</option><option>Delta Amacuro</option>
-          <option>Distrito Capital</option><option>Falcón</option><option>Guárico</option>
-          <option>Lara</option><option>Mérida</option><option>Miranda</option>
-          <option>Monagas</option><option>Nueva Esparta</option><option>Portuguesa</option>
-          <option>Sucre</option><option>Táchira</option><option>Trujillo</option>
-          <option>La Guaira (Vargas)</option><option>Yaracuy</option><option>Zulia</option>
+        <label for="tipoEntrega">¿Cómo quieres recibir tu pedido?</label>
+        <select id="tipoEntrega" required>
+          <option value="nacional" selected>Envío nacional por agencia</option>
+          <option value="delivery_maracay">Delivery en Maracay (sin costo)</option>
         </select>
+        <p class="ayuda">Si estás en el centro de Maracay, puedes retirar tu pedido sin costo en uno de nuestros puntos de entrega.</p>
       </div>
-      <div>
-        <label for="ciudad">Ciudad</label>
-        <input type="text" id="ciudad" required>
+
+      <!-- Delivery en Maracay -->
+      <div id="bloqueDelivery">
+        <div class="caja-delivery" id="cajaDelivery" style="display:block;">
+          <p>Delivery sin costo en el centro de Maracay. Elige el punto donde te queda mejor retirar tu pedido. Cuando termines, te contactamos personalmente para coordinar el día y la hora de la entrega (mañana o tarde).</p>
+        </div>
+        <div>
+          <label for="puntoEntrega">Punto de entrega</label>
+          <select id="puntoEntrega">
+            <option value="" disabled selected>Selecciona un punto</option>
+            <option>Centro Comercial Galería</option>
+            <option>Centro Comercial Parque Aragua</option>
+            <option>San Jacinto</option>
+          </select>
+        </div>
       </div>
-      <div>
-        <label for="oficina">Oficina de envío</label>
-        <select id="oficina" required>
-          <option value="" disabled selected>Selecciona una agencia</option>
-          <option>MRW</option>
-          <option>Tealca</option>
-          <option>Zoom</option>
-          <option>Domesa</option>
-          <option value="__otra">Otra (especificar)</option>
-        </select>
-      </div>
-      <div id="otraWrap" style="display:none;">
-        <label for="otraOficina">Nombre de la agencia</label>
-        <input type="text" id="otraOficina">
-      </div>
-      <div>
-        <label for="direccion">Punto de referencia de esa oficina</label>
-        <input type="text" id="direccion" placeholder="Ej: frente a la plaza, cerca del C.C. Sambil">
-        <p class="ayuda">Opcional, pero ayuda a que la agencia ubique mejor la entrega.</p>
+
+      <!-- Envío nacional por agencia -->
+      <div id="bloqueNacional">
+        <div>
+          <label for="estadoVzla">Estado</label>
+          <select id="estadoVzla" required>
+            <option value="" disabled selected>Selecciona tu estado</option>
+            <option>Amazonas</option><option>Anzoátegui</option><option>Apure</option>
+            <option>Aragua</option><option>Barinas</option><option>Bolívar</option>
+            <option>Carabobo</option><option>Cojedes</option><option>Delta Amacuro</option>
+            <option>Distrito Capital</option><option>Falcón</option><option>Guárico</option>
+            <option>Lara</option><option>Mérida</option><option>Miranda</option>
+            <option>Monagas</option><option>Nueva Esparta</option><option>Portuguesa</option>
+            <option>Sucre</option><option>Táchira</option><option>Trujillo</option>
+            <option>La Guaira (Vargas)</option><option>Yaracuy</option><option>Zulia</option>
+          </select>
+        </div>
+        <div>
+          <label for="ciudad">Ciudad</label>
+          <input type="text" id="ciudad" required>
+        </div>
+        <div>
+          <label for="oficina">Oficina de envío</label>
+          <select id="oficina" required>
+            <option value="" disabled selected>Selecciona una agencia</option>
+            <option>MRW</option>
+            <option>Tealca</option>
+            <option>Zoom</option>
+            <option>Domesa</option>
+            <option value="__otra">Otra (especificar)</option>
+          </select>
+        </div>
+        <div id="otraWrap" style="display:none;">
+          <label for="otraOficina">Nombre de la agencia</label>
+          <input type="text" id="otraOficina">
+        </div>
+        <div>
+          <label for="direccion">Punto de referencia de esa oficina</label>
+          <input type="text" id="direccion" placeholder="Ej: frente a la plaza, cerca del C.C. Sambil">
+          <p class="ayuda">Opcional, pero ayuda a que la agencia ubique mejor la entrega.</p>
+        </div>
       </div>
     </div>
 
@@ -310,6 +341,10 @@
   const paisSel = document.getElementById("pais");
   const camposNacionales = document.getElementById("camposNacionales");
   const cajaInternacional = document.getElementById("cajaInternacional");
+  const tipoEntregaSel = document.getElementById("tipoEntrega");
+  const bloqueNacional = document.getElementById("bloqueNacional");
+  const bloqueDelivery = document.getElementById("bloqueDelivery");
+  const puntoSel = document.getElementById("puntoEntrega");
   const oficinaSel = document.getElementById("oficina");
   const otraWrap = document.getElementById("otraWrap");
   const otraInput = document.getElementById("otraOficina");
@@ -344,14 +379,36 @@
     if(ev.persisted && yaEnviado()) mostrarYaEnviado();
   });
 
+  // Muestra el bloque que corresponde (delivery Maracay o agencia) y ajusta qué campos son obligatorios
+  function aplicarTipoEntrega(){
+    const esDelivery = tipoEntregaSel.value === "delivery_maracay";
+    bloqueDelivery.style.display = esDelivery ? "flex" : "none";
+    bloqueNacional.style.display = esDelivery ? "none" : "flex";
+    puntoSel.required = esDelivery;
+    document.getElementById("estadoVzla").required = !esDelivery;
+    document.getElementById("ciudad").required = !esDelivery;
+    oficinaSel.required = !esDelivery;
+  }
+
   paisSel.addEventListener("change", () => {
     const esInternacional = paisSel.value === "Internacional";
     camposNacionales.style.display = esInternacional ? "none" : "block";
     cajaInternacional.style.display = esInternacional ? "block" : "none";
     // Si es internacional, los campos nacionales dejan de ser obligatorios
     camposNacionales.querySelectorAll("input, select").forEach(el => { el.required = !esInternacional; });
+    // Al volver a Venezuela, se reajusta según el tipo de entrega elegido
+    if(!esInternacional){
+      document.getElementById("direccion").required = false;
+      otraInput.required = false;
+      aplicarTipoEntrega();
+    } else {
+      puntoSel.required = false;
+    }
     // El correo siempre es obligatorio (está fuera de camposNacionales)
   });
+
+  tipoEntregaSel.addEventListener("change", aplicarTipoEntrega);
+  aplicarTipoEntrega();
 
   oficinaSel.addEventListener("change", () => {
     otraWrap.style.display = oficinaSel.value === "__otra" ? "block" : "none";
@@ -376,21 +433,26 @@
     btn.textContent = "Enviando...";
 
     const esInternacional = paisSel.value === "Internacional";
+    const esDelivery = !esInternacional && tipoEntregaSel.value === "delivery_maracay";
+    const tipoEnvio = esDelivery ? "delivery_maracay" : "nacional";
+    const puntoEntrega = esDelivery ? puntoSel.value : "";
     const oficina = oficinaSel.value === "__otra" ? otraInput.value.trim() : oficinaSel.value;
 
     const payload = {
       p_compra_id: compraId,
       p_nombre: esInternacional ? "" : document.getElementById("nombre").value.trim(),
       p_apellido: esInternacional ? "" : document.getElementById("apellido").value.trim(),
-      p_oficina_envio: esInternacional ? "" : oficina,
+      p_oficina_envio: (esInternacional || esDelivery) ? "" : oficina,
       p_cedula: esInternacional ? "" : document.getElementById("cedula").value.trim(),
       p_telefono: esInternacional ? "" : document.getElementById("telefono").value.trim(),
-      p_ciudad_envio: esInternacional ? "" : document.getElementById("ciudad").value.trim(),
-      p_provincia_envio: esInternacional ? "" : document.getElementById("estadoVzla").value,
-      p_direccion_envio: esInternacional ? "" : document.getElementById("direccion").value.trim(),
+      p_ciudad_envio: (esInternacional || esDelivery) ? "" : document.getElementById("ciudad").value.trim(),
+      p_provincia_envio: (esInternacional || esDelivery) ? "" : document.getElementById("estadoVzla").value,
+      p_direccion_envio: (esInternacional || esDelivery) ? "" : document.getElementById("direccion").value.trim(),
       p_pais_envio: paisSel.value,
       p_correo: correo,
-      p_tel_wa: telWa
+      p_tel_wa: telWa,
+      p_tipo_envio: tipoEnvio,
+      p_punto_entrega: puntoEntrega
     };
 
     try{
@@ -415,11 +477,13 @@
         correo: correo,
         nombre: payload.p_nombre,
         apellido: payload.p_apellido,
-        oficina_envio: payload.p_oficina_envio,
-        ciudad_envio: payload.p_ciudad_envio,
-        estado_envio: payload.p_provincia_envio,
-        referencia_envio: payload.p_direccion_envio,
-        pais_envio: payload.p_pais_envio
+        oficina_envio: esDelivery ? ("DELIVERY MARACAY — " + puntoEntrega) : payload.p_oficina_envio,
+        ciudad_envio: esDelivery ? "Maracay" : payload.p_ciudad_envio,
+        estado_envio: esDelivery ? "Aragua" : payload.p_provincia_envio,
+        referencia_envio: esDelivery ? puntoEntrega : payload.p_direccion_envio,
+        pais_envio: payload.p_pais_envio,
+        tipo_envio: tipoEnvio,
+        punto_entrega: puntoEntrega
       };
       const enviado = telWa ? await notificarValentina(notifPayload) : false;
 
@@ -429,6 +493,11 @@
         document.getElementById("okTexto").textContent = enviado
           ? "Ya le avisamos a Valentina — un asesor te escribe por aquí mismo. Te enviamos la confirmación a tu correo."
           : "Dale al botón para avisarle a Valentina — un asesor te escribe por aquí mismo.";
+      } else if(esDelivery){
+        document.getElementById("okTitulo").textContent = "¡Listo!";
+        document.getElementById("okTexto").textContent = enviado
+          ? "Elegiste delivery en Maracay: " + puntoEntrega + ". Nuestro equipo te va a contactar personalmente para coordinar la entrega. También te enviamos la confirmación a tu correo."
+          : "Elegiste delivery en Maracay: " + puntoEntrega + ". Dale al botón para avisarle a Valentina; nuestro equipo te va a contactar personalmente para coordinar la entrega.";
       } else {
         document.getElementById("okTexto").textContent = enviado
           ? "Ya le avisamos a Valentina, revisa tu WhatsApp. También te enviamos la confirmación a tu correo."
@@ -439,7 +508,9 @@
       } else {
         const msg = esInternacional
           ? `✅ Confirmo, envío internacional para la compra *${compraId}*. Quedo pendiente del asesor.`
-          : `✅ Ya llené mis datos de envío para la compra *${compraId}*. Continuamos por aquí.`;
+          : esDelivery
+            ? `✅ Ya llené mis datos para la compra *${compraId}*. Elegí delivery en Maracay (${puntoEntrega}). Quedo pendiente para coordinar la entrega.`
+            : `✅ Ya llené mis datos de envío para la compra *${compraId}*. Continuamos por aquí.`;
         btnWa.href = `https://wa.me/584221482602?text=${encodeURIComponent(msg)}`;
       }
       document.getElementById("ok").classList.add("show");
