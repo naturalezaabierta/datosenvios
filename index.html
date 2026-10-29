@@ -254,6 +254,13 @@
       </div>
     </div>
 
+    <div style="background:var(--paper);border:1.5px solid var(--line);border-radius:6px;padding:14px 16px;">
+      <label style="display:flex;gap:12px;align-items:flex-start;margin:0;cursor:pointer;font-size:0.92rem;color:var(--ink);">
+        <input type="checkbox" id="quiereAfiliarse" style="width:20px;height:20px;padding:0;margin:2px 0 0;flex-shrink:0;">
+        <span>Quiero afiliarme gratis y ganar comisiones recomendando Naturaleza Abierta.</span>
+      </label>
+    </div>
+
     <p class="err" id="err">No pudimos guardar tus datos. Verifica el link o inténtalo de nuevo.</p>
     <button type="submit" id="btn">Confirmar datos</button>
   </form>
@@ -436,6 +443,7 @@
     const esDelivery = !esInternacional && tipoEntregaSel.value === "delivery_maracay";
     const tipoEnvio = esDelivery ? "delivery_maracay" : "nacional";
     const puntoEntrega = esDelivery ? puntoSel.value : "";
+    const quiereAfiliarse = document.getElementById("quiereAfiliarse").checked;
     const oficina = oficinaSel.value === "__otra" ? otraInput.value.trim() : oficinaSel.value;
 
     const payload = {
@@ -482,6 +490,7 @@
         estado_envio: esDelivery ? "Aragua" : payload.p_provincia_envio,
         referencia_envio: esDelivery ? puntoEntrega : payload.p_direccion_envio,
         pais_envio: payload.p_pais_envio,
+        quiere_afiliarse: quiereAfiliarse,
         tipo_envio: tipoEnvio,
         punto_entrega: puntoEntrega
       };
@@ -500,7 +509,7 @@
           : "Elegiste delivery en Maracay: " + puntoEntrega + ". Dale al botón para avisarle a Valentina; nuestro equipo te va a contactar personalmente para coordinar la entrega.";
       } else {
         document.getElementById("okTexto").textContent = enviado
-          ? "Ya le avisamos a Valentina, revisa tu WhatsApp. También te enviamos la confirmación a tu correo."
+                    ? (quiereAfiliarse ? "Ya le avisamos a Valentina, revisa tu WhatsApp. También te enviamos la confirmación a tu correo." : "Listo, ya registramos tus datos de envío. Te enviamos la confirmación a tu correo.")
           : "Dale al botón para avisarle a Valentina que ya terminaste.";
       }
       if(enviado){
